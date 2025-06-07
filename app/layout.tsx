@@ -32,7 +32,9 @@ export default function RootLayout({
 			>
 				<Navigation />
 				<BookContextProvider>
-					<main className="flex flex-col items-center">{children}</main>
+					<main className="flex flex-col items-center min-h-[82vh] mx-3 md:mx-5">
+						{children}
+					</main>
 				</BookContextProvider>
 
 				<Footer />

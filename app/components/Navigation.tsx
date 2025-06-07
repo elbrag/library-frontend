@@ -17,7 +17,7 @@ const Navigation: React.FC = () => {
 	];
 
 	return (
-		<header className=" w-full px-4 md:px-10 py-3 md:py-8">
+		<header className="w-full px-3 md:px-10 py-3 md:py-8">
 			<div className="flex justify-between">
 				<Link className="logo font-bold" href="/">
 					The Classics Library
