@@ -7,13 +7,18 @@ const Button: React.FC<ButtonProps> = ({
 	onClick,
 	isSubmit,
 	disabled,
+	color = "dark",
 }) => {
-	let classes =
-		"py-1 px-3 md:py-2 md:px-5 bg-gray-900 text-orange-50 rounded-xs transition-colors ";
+	const colorClasses = color === "dark" ? "bg-gray-900" : "bg-red-700";
+	const hoverColorClasses =
+		color === "dark" ? "hover:bg-gray-500" : "hover:bg-red-500";
 
+	let classes = `py-1 px-3 md:py-2 md:px-5 rounded-xs transition-colors text-orange-50 ${colorClasses} `;
+
+	// Disabled classes
 	classes = disabled
 		? classes.concat("opacity-50 cursor-not-allowed")
-		: classes.concat("cursor-pointer hover:bg-gray-500");
+		: classes.concat(`cursor-pointer ${hoverColorClasses}`);
 
 	return (
 		<button

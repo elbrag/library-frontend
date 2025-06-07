@@ -5,4 +5,5 @@ export interface ButtonProps {
 	onClick: (event: MouseEvent<HTMLButtonElement>) => void;
 	isSubmit?: boolean;
 	disabled?: boolean;
+	color?: "dark" | "red";
 }
