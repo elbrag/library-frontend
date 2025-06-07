@@ -7,16 +7,11 @@ import Button from "../components/Button";
 import Form from "../components/Form";
 import { BookContext } from "../context/BookContext";
 import { BookProps } from "@/lib/types/book";
+import { getFormData } from "@/lib/helpers/formData";
 
 const AddPage: React.FC = () => {
 	const { addBook } = useContext(BookContext);
-
-	const formData: FormDataObjectProps[] = [
-		{ label: "Book title", id: "title", value: "", type: "text" },
-		{ label: "Author", id: "author", value: "", type: "text" },
-		{ label: "Publishing date", id: "dateOfPublish", value: "", type: "date" },
-		{ label: "Cover image url", id: "coverImage", value: "", type: "text" },
-	];
+	const formData = getFormData();
 	const [currentFormData, setCurrentFormData] = useState(formData);
 	const [success, setSuccess] = useState(false);
 
@@ -30,7 +25,6 @@ const AddPage: React.FC = () => {
 			}
 			return dataObj;
 		});
-
 		setCurrentFormData(newFormData);
 	};
 

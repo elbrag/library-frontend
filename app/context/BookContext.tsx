@@ -100,7 +100,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	/**
 	 * Edit book / PUT
 	 */
-	const editBook = async (id: number, updatedBook: BookProps) => {
+	const editBook = async (id: number, updatedBook: Omit<BookProps, "id">) => {
 		try {
 			const response = await fetch(`${baseApiUrl}/${id}`, {
 				method: "PUT",

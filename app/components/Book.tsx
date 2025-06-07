@@ -3,7 +3,7 @@ import { BookProps } from "@/lib/types/book";
 import React from "react";
 import Heading from "./Heading";
 import Image from "next/image";
-import { formatDate } from "@/lib/helpers/date";
+import { formatDateFromISO } from "@/lib/helpers/date";
 import Link from "next/link";
 
 const Book: React.FC<BookProps> = ({
@@ -29,7 +29,7 @@ const Book: React.FC<BookProps> = ({
 				<div className="font-bold">{title}</div>{" "}
 				<div className="text-sm">by {author}</div>
 			</Heading>
-			<p className="text-sm">Published {formatDate(dateOfPublish)}</p>
+			<p className="text-sm">Published {formatDateFromISO(dateOfPublish)}</p>
 		</Link>
 	);
 };

@@ -1,22 +1,33 @@
 "use client";
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import Heading from "../../components/Heading";
 import { BookContext } from "../../context/BookContext";
 import { useParams } from "next/navigation";
-import { formatDate } from "@/lib/helpers/date";
+import { formatDateFromISO, formatDateToISO } from "@/lib/helpers/date";
 import Image from "next/image";
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
+import Form from "@/app/components/Form";
+import { getFormData } from "@/lib/helpers/formData";
+import Input from "@/app/components/Input";
+import { BookProps } from "@/lib/types/book";
 
 const BookSinglePage: React.FC = () => {
 	const { id } = useParams();
 	const router = useRouter();
 	const idNumber = typeof id === "string" ? parseInt(id, 10) : null;
-	const { currentBooks, fetchMade, deleteBook } = useContext(BookContext);
+	const { currentBooks, fetchMade, deleteBook, editBook } =
+		useContext(BookContext);
 	const book = currentBooks.find((book) => book.id === idNumber);
 	const [deletionDone, setDeletionDone] = useState(false);
+	const [showEditingMode, setShowEditingMode] = useState(false);
+	const formData = getFormData(book);
+	const [currentFormData, setCurrentFormData] = useState(formData);
+	const [editDone, setEditDone] = useState(false);
 
 	if (deletionDone) return <div>Book successfully deleted!</div>;
+	if (editDone) return <div>Book successfully edited!</div>;
+
 	if (!fetchMade) {
 		return <div>Fetching book...</div>;
 	}
@@ -24,6 +35,9 @@ const BookSinglePage: React.FC = () => {
 		return <div>Book not found</div>;
 	}
 
+	/**
+	 * On Delete Book
+	 */
 	const onDeleteBook = async () => {
 		const confirmationMessage = `Are you sure you want to delete the book titled "${book.title}"? This action cannot be undone.`;
 
@@ -35,6 +49,52 @@ const BookSinglePage: React.FC = () => {
 				setDeletionDone(false);
 			}, 3000);
 		}
+	};
+
+	/**
+	 * On Input Change
+	 */
+	const onInputChange = (id: string, event: ChangeEvent<HTMLInputElement>) => {
+		const newFormData = currentFormData.map((dataObj) => {
+			if (dataObj.id === id) {
+				return { ...dataObj, value: event.target.value };
+			}
+			return dataObj;
+		});
+		setCurrentFormData(newFormData);
+	};
+
+	/**
+	 * On Save Edits
+	 */
+	const onSaveEdits = async () => {
+		// TODO: Make dry
+		const propToFormDataMap: Record<string, keyof Omit<BookProps, "id">> = {
+			title: "title",
+			author: "author",
+			dateOfPublish: "dateOfPublish",
+			coverImage: "coverImage",
+		};
+
+		const updatedBook: Omit<BookProps, "id"> = currentFormData.reduce(
+			(acc, data) => {
+				const propKey = propToFormDataMap[data.id];
+				if (propKey) {
+					if (propKey === "dateOfPublish")
+						acc[propKey] = acc[propKey] = formatDateToISO(data.value);
+
+					acc[propKey] = acc[propKey] = data.value;
+				}
+				return acc;
+			},
+			{} as Omit<BookProps, "id">
+		);
+		const result = await editBook(book.id, updatedBook);
+		console.log(result);
+		setEditDone(true);
+		setTimeout(() => {
+			setEditDone(false);
+		}, 3000);
 	};
 
 	return (
@@ -50,13 +110,37 @@ const BookSinglePage: React.FC = () => {
 				<Heading tag="h1">{book.title}</Heading>
 				<p>by {book.author}</p>
 				<p className="text-sm mt-4">
-					Published {formatDate(book.dateOfPublish)}
+					Published {formatDateFromISO(book.dateOfPublish)}
 				</p>
 			</div>
-			<div className="flex gap-4">
-				<Button label="Edit book" onClick={() => {}} />
-				<Button label="Delete book" color="red" onClick={onDeleteBook} />
-			</div>
+			{showEditingMode ? (
+				<div>
+					<Form>
+						{currentFormData.map((data) => (
+							<Input
+								key={data.id}
+								label={data.label}
+								id={data.id}
+								value={data.value}
+								type={data.type}
+								onChange={(event) => onInputChange(data.id, event)}
+							/>
+						))}
+					</Form>
+					<div className="flex gap-4 mt-4 md:mt-6">
+						<Button
+							label="Cancel editing"
+							onClick={() => setShowEditingMode(false)}
+						/>
+						<Button label="Save edits" onClick={onSaveEdits} />
+					</div>
+				</div>
+			) : (
+				<div className="flex gap-4">
+					<Button label="Edit book" onClick={() => setShowEditingMode(true)} />
+					<Button label="Delete book" color="red" onClick={onDeleteBook} />
+				</div>
+			)}
 		</div>
 	);
 };
