@@ -8,6 +8,7 @@ import Form from "../components/Form";
 import { BookContext } from "../context/BookContext";
 import { BookProps } from "@/lib/types/book";
 import { getFormData } from "@/lib/helpers/formData";
+import { formatDateToISO } from "@/lib/helpers/date";
 
 const AddPage: React.FC = () => {
 	const { addBook } = useContext(BookContext);
@@ -42,7 +43,9 @@ const AddPage: React.FC = () => {
 		const book: Omit<BookProps, "id"> = currentFormData.reduce((acc, data) => {
 			const propKey = propToFormDataMap[data.id];
 			if (propKey) {
-				acc[propKey] = data.value;
+				if (propKey === "dateOfPublish")
+					acc[propKey] = formatDateToISO(data.value);
+				else acc[propKey] = data.value;
 			}
 			return acc;
 		}, {} as Omit<BookProps, "id">);
