@@ -6,7 +6,7 @@ import Book from "./Book";
 const BookList: React.FC<{ books: BookProps[] }> = ({ books }) => {
 	return (
 		<div>
-			<ul>
+			<ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
 				{books.map((book) => (
 					<li key={book.id}>
 						<Book {...book} />

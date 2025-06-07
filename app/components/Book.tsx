@@ -12,8 +12,9 @@ const Book: React.FC<BookProps> = ({
 	coverImage,
 }) => {
 	return (
-		<div className="w-1/2 sm:w-1/3 md:w-1/4 overflow-hidden" key={id}>
+		<div className="w-full overflow-hidden" key={id}>
 			<Image
+				className="w-full max-w-32"
 				width={100}
 				height={140}
 				src={coverImage}
