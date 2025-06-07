@@ -81,14 +81,14 @@ const BookSinglePage: React.FC = () => {
 				const propKey = propToFormDataMap[data.id];
 				if (propKey) {
 					if (propKey === "dateOfPublish")
-						acc[propKey] = acc[propKey] = formatDateToISO(data.value);
-
-					acc[propKey] = acc[propKey] = data.value;
+						acc[propKey] = formatDateToISO(data.value);
+					else acc[propKey] = data.value;
 				}
 				return acc;
 			},
 			{} as Omit<BookProps, "id">
 		);
+		console.log(updatedBook);
 		const result = await editBook(book.id, updatedBook);
 		console.log(result);
 		setEditDone(true);
