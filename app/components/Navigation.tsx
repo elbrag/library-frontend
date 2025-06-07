@@ -44,7 +44,7 @@ const Navigation: React.FC = () => {
 						Menu
 					</button>
 					{menuOpen && (
-						<nav className="bg-white rounded-sm border border-gray-900 max-w-fit absolute right-0 -bottom-4 translate-y-full px-3 py-2">
+						<nav className="bg-white rounded-sm border border-gray-900 max-w-fit absolute right-0 -bottom-2 translate-y-full px-3 py-2">
 							<ul className="flex flex-col justify-between gap-2">
 								{menuItems.map((item) => (
 									<li key={`menu-item-${item.path}`}>

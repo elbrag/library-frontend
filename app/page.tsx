@@ -1,10 +1,13 @@
-import Navigation from "./components/Navigation";
+import Heading from "./components/Heading";
 
 export default function Home() {
 	return (
-		<main className="flex flex-col items-center">
-			<Navigation />
-		</main>
+		<div>
+			<div className="text-center">
+				<Heading tag="h1">Welcome to The Classics Library</Heading>
+				<p className="md:text-lg">The library is open</p>
+			</div>
+		</div>
 	);
 }
 
