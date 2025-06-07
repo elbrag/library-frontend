@@ -1,7 +1,13 @@
 "use client";
 import { BookProps } from "@/lib/types/book";
 import { BooksContextType } from "@/lib/types/context";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 export const BookContext = createContext<BooksContextType>({
 	currentBooks: [],
@@ -17,11 +23,20 @@ export const BookContext = createContext<BooksContextType>({
 	editBook: async () => {
 		console.warn("No BookContext when trying to run editBook");
 	},
+	fetchMade: false,
 });
 
 export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	const baseApiUrl = `${process.env.NEXT_PUBLIC_API_URL}/books`;
 	const [currentBooks, setCurrentBooks] = useState<BookProps[]>([]);
+	const [fetchMade, setFetchMade] = useState(false);
+
+	useEffect(() => {
+		if (!fetchMade) {
+			fetchBooks();
+			setFetchMade(true);
+		}
+	}, [currentBooks.length, fetchMade]);
 
 	/**
 	 * Fetch books / GET
@@ -110,7 +125,14 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 
 	return (
 		<BookContext.Provider
-			value={{ currentBooks, fetchBooks, addBook, deleteBook, editBook }}
+			value={{
+				currentBooks,
+				fetchBooks,
+				addBook,
+				deleteBook,
+				editBook,
+				fetchMade,
+			}}
 		>
 			{children}
 		</BookContext.Provider>

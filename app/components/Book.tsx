@@ -4,6 +4,7 @@ import React from "react";
 import Heading from "./Heading";
 import Image from "next/image";
 import { formatDate } from "@/lib/helpers/date";
+import Link from "next/link";
 
 const Book: React.FC<BookProps> = ({
 	id,
@@ -13,9 +14,9 @@ const Book: React.FC<BookProps> = ({
 	coverImage,
 }) => {
 	return (
-		<div
+		<Link
+			href={`books/${id}`}
 			className="w-full overflow-hidden bg-orange-50 rounded-sm flex flex-col items-center py-4 px-4 md:px-6 gap-2 md:gap-3 text-center"
-			key={id}
 		>
 			<Image
 				className="w-full max-w-32"
@@ -29,7 +30,7 @@ const Book: React.FC<BookProps> = ({
 				<div className="text-sm">by {author}</div>
 			</Heading>
 			<p className="text-sm">Published {formatDate(dateOfPublish)}</p>
-		</div>
+		</Link>
 	);
 };
 

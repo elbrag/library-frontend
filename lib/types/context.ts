@@ -6,4 +6,5 @@ export interface BooksContextType {
 	addBook: (book: Omit<BookProps, "id">) => Promise<void>;
 	deleteBook: (id: number) => Promise<void>;
 	editBook: (id: number, updatedBook: BookProps) => Promise<void>;
+	fetchMade: boolean;
 }

@@ -1,15 +1,11 @@
 "use client";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Heading from "./components/Heading";
 import { BookContext } from "./context/BookContext";
 import BookList from "./components/BookList";
 
 export default function Home() {
-	const { fetchBooks, currentBooks } = useContext(BookContext);
-
-	useEffect(() => {
-		if (currentBooks.length === 0) fetchBooks();
-	}, [currentBooks.length, fetchBooks]);
+	const { currentBooks } = useContext(BookContext);
 
 	return (
 		<div>

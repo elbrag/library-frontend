@@ -12,8 +12,6 @@ const Navigation: React.FC = () => {
 			label: "Add book",
 			path: "add",
 		},
-		{ label: "Delete books", path: "delete" },
-		{ label: "Edit books", path: "edit" },
 	];
 
 	return (
@@ -29,7 +27,7 @@ const Navigation: React.FC = () => {
 					>
 						<div>
 							<Image
-								src="user-icon.svg"
+								src="/user-icon.svg"
 								alt="Profile image"
 								width={24}
 								height={24}
