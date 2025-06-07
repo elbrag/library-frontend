@@ -9,7 +9,7 @@ const Navigation: React.FC = () => {
 
 	const menuItems: MenuItemProps[] = [
 		{
-			label: "Add books",
+			label: "Add book",
 			path: "add",
 		},
 		{ label: "Delete books", path: "delete" },
