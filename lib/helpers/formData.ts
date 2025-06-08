@@ -11,7 +11,7 @@ export const getFormData = (bookData?: BookProps): FormDataObjectProps[] => {
 		{ label: "Book title", id: "title", value: "", type: "text" },
 		{ label: "Author", id: "author", value: "", type: "text" },
 		{ label: "Publishing date", id: "dateOfPublish", value: "", type: "date" },
-		{ label: "Cover image url", id: "coverImage", value: "", type: "text" },
+		{ label: "Cover image url", id: "coverImage", value: "", type: "url" },
 	];
 
 	if (!bookData) {

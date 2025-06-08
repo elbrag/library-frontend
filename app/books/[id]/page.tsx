@@ -11,6 +11,7 @@ import Form from "@/app/components/Form";
 import { getFormData, makeBookFromFormData } from "@/lib/helpers/formData";
 import Input from "@/app/components/Input";
 import { FormDataObjectProps } from "@/lib/types/form";
+import { checkIfStatusIsOk } from "@/lib/helpers/api";
 
 const BookSinglePage: React.FC = () => {
 	const router = useRouter();
@@ -18,7 +19,7 @@ const BookSinglePage: React.FC = () => {
 	// Find book by id
 	const { id } = useParams();
 	const idNumber = typeof id === "string" ? parseInt(id, 10) : null;
-	const { currentBooks, fetchMade, deleteBook, editBook } =
+	const { currentBooks, fetchMade, deleteBook, editBook, fetchBooks } =
 		useContext(BookContext);
 	const book = currentBooks.find((book) => book.id === idNumber);
 
@@ -58,12 +59,18 @@ const BookSinglePage: React.FC = () => {
 		const confirmationMessage = `Are you sure you want to delete the book titled "${book.title}"? This action cannot be undone.`;
 
 		if (window.confirm(confirmationMessage)) {
-			await deleteBook(book.id);
-			setDeletionDone(true);
-			setTimeout(() => {
-				router.push("/");
-				setDeletionDone(false);
-			}, 3000);
+			const result = await deleteBook(book.id);
+
+			if (typeof result === "number" && checkIfStatusIsOk(result)) {
+				setDeletionDone(true);
+				await fetchBooks();
+				setTimeout(() => {
+					setDeletionDone(false);
+					router.push("/");
+				}, 3000);
+			} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
+				console.error("Error deleting book:", result.error);
+			}
 		}
 	};
 
@@ -85,13 +92,17 @@ const BookSinglePage: React.FC = () => {
 	 */
 	const onSaveEdits = async () => {
 		const updatedBook = makeBookFromFormData(currentFormData);
-		console.log(updatedBook);
 		const result = await editBook(book.id, updatedBook);
-		console.log(result);
-		setEditDone(true);
-		setTimeout(() => {
-			setEditDone(false);
-		}, 3000);
+
+		if (typeof result === "number" && checkIfStatusIsOk(result)) {
+			setEditDone(true);
+			await fetchBooks();
+			setTimeout(() => {
+				setEditDone(false);
+			}, 3000);
+		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
+			console.error("Error editing book:", result.error);
+		}
 	};
 
 	return (

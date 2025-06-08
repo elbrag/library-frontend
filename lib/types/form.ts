@@ -4,7 +4,7 @@ export interface InputProps {
 	id: string;
 	value: string;
 	label: string;
-	type?: "text" | "date";
+	type?: "text" | "date" | "url";
 	placeholder?: string;
 	className?: string;
 	required?: boolean;
@@ -16,5 +16,5 @@ export interface FormDataObjectProps {
 	id: string;
 	label: string;
 	value: string;
-	type: "text" | "date";
+	type: "text" | "date" | "url";
 }

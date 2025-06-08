@@ -7,9 +7,10 @@ import Button from "../components/Button";
 import Form from "../components/Form";
 import { BookContext } from "../context/BookContext";
 import { getFormData, makeBookFromFormData } from "@/lib/helpers/formData";
+import { checkIfStatusIsOk } from "@/lib/helpers/api";
 
 const AddPage: React.FC = () => {
-	const { addBook } = useContext(BookContext);
+	const { addBook, fetchBooks } = useContext(BookContext);
 	const formData = getFormData();
 	const [currentFormData, setCurrentFormData] = useState(formData);
 	const [success, setSuccess] = useState(false);
@@ -33,11 +34,16 @@ const AddPage: React.FC = () => {
 	const onSubmit = async () => {
 		const book = makeBookFromFormData(currentFormData);
 		const result = await addBook(book);
-		console.log(result);
-		setSuccess(true);
-		setTimeout(() => {
-			setSuccess(false);
-		}, 3000);
+
+		if (typeof result === "number" && checkIfStatusIsOk(result)) {
+			setSuccess(true);
+			await fetchBooks();
+			setTimeout(() => {
+				setSuccess(false);
+			}, 3000);
+		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
+			console.error("Error adding book:", result.error);
+		}
 	};
 
 	return (

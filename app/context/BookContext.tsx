@@ -12,22 +12,24 @@ import {
 export const BookContext = createContext<BooksContextType>({
 	currentBooks: [],
 	fetchBooks: async () => {
-		console.warn("No BookContext when trying to run fetchBooks");
+		return 102;
 	},
 	addBook: async () => {
-		console.warn("No BookContext when trying to run addBook");
+		return 102;
 	},
 	deleteBook: async () => {
-		console.warn("No BookContext when trying to run deleteBook");
+		return 102;
 	},
 	editBook: async () => {
-		console.warn("No BookContext when trying to run editBook");
+		return 102;
 	},
 	fetchMade: false,
 });
 
 export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	const baseApiUrl = `${process.env.NEXT_PUBLIC_API_URL}/books`;
+	const fallbackErrorMessage = "An unknown error occurred";
+
 	const [currentBooks, setCurrentBooks] = useState<BookProps[]>([]);
 	const [fetchMade, setFetchMade] = useState(false);
 
@@ -44,13 +46,22 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	const fetchBooks = async () => {
 		try {
 			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books`);
+
 			if (!response.ok) {
-				throw new Error("Failed to fetch books");
+				const errorData = await response
+					.json()
+					.catch(() => ({ message: fallbackErrorMessage }));
+				throw new Error(errorData.message || "Failed to fetch books");
 			}
+
 			const data = await response.json();
 			setCurrentBooks(data);
-		} catch (error) {
-			console.error("Error fetching books:", error);
+			return response.status;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return { error: error.message };
+			}
+			return { error: fallbackErrorMessage };
 		}
 	};
 
@@ -68,12 +79,18 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 			});
 
 			if (!response.ok) {
-				throw new Error("Failed to add book");
+				const errorData = await response
+					.json()
+					.catch(() => ({ message: fallbackErrorMessage }));
+				throw new Error(errorData.message || "Failed to add book");
 			}
 
-			fetchBooks();
-		} catch (error) {
-			console.error("Error adding book:", error);
+			return response.status;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return { error: error.message };
+			}
+			return { error: fallbackErrorMessage };
 		}
 	};
 
@@ -87,12 +104,18 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 			});
 
 			if (!response.ok) {
-				throw new Error("Failed to delete book");
+				const errorData = await response
+					.json()
+					.catch(() => ({ message: fallbackErrorMessage }));
+				throw new Error(errorData.message || "Failed to delete book");
 			}
 
-			fetchBooks();
-		} catch (error) {
-			console.error("Error deleting book:", error);
+			return response.status;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return { error: error.message };
+			}
+			return { error: fallbackErrorMessage };
 		}
 	};
 
@@ -110,12 +133,18 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 			});
 
 			if (!response.ok) {
-				throw new Error("Failed to edit book");
+				const errorData = await response
+					.json()
+					.catch(() => ({ message: fallbackErrorMessage }));
+				throw new Error(errorData.message || "Failed to edit book");
 			}
 
-			fetchBooks();
-		} catch (error) {
-			console.error("Error editing book:", error);
+			return response.status;
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return { error: error.message };
+			}
+			return { error: fallbackErrorMessage };
 		}
 	};
 
