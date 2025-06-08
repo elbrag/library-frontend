@@ -1,4 +1,5 @@
 "use client";
+import { apiRequest } from "@/lib/helpers/api";
 import { BookProps, BookWithoutId } from "@/lib/types/book";
 import { BooksContextType } from "@/lib/types/context";
 import {
@@ -11,9 +12,7 @@ import {
 
 export const BookContext = createContext<BooksContextType>({
 	currentBooks: [],
-	fetchBooks: async () => {
-		return 102;
-	},
+	fetchBooks: async () => {},
 	addBook: async () => {
 		return 102;
 	},
@@ -28,7 +27,6 @@ export const BookContext = createContext<BooksContextType>({
 
 export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	const baseApiUrl = `${process.env.NEXT_PUBLIC_API_URL}/books`;
-	const fallbackErrorMessage = "An unknown error occurred";
 
 	const [currentBooks, setCurrentBooks] = useState<BookProps[]>([]);
 	const [fetchMade, setFetchMade] = useState(false);
@@ -38,30 +36,27 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 			fetchBooks();
 			setFetchMade(true);
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currentBooks.length, fetchMade]);
 
 	/**
 	 * Fetch books / GET
 	 */
 	const fetchBooks = async () => {
-		try {
-			const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/books`);
+		const result = await apiRequest(
+			baseApiUrl,
+			"GET",
+			undefined,
+			"Failed to fetch books"
+		);
 
-			if (!response.ok) {
-				const errorData = await response
-					.json()
-					.catch(() => ({ message: fallbackErrorMessage }));
-				throw new Error(errorData.message || "Failed to fetch books");
-			}
-
-			const data = await response.json();
-			setCurrentBooks(data);
-			return response.status;
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				return { error: error.message };
-			}
-			return { error: fallbackErrorMessage };
+		if (typeof result === "number") {
+			const booksData = await fetch(baseApiUrl)
+				.then((response) => response.json())
+				.catch(() => []);
+			setCurrentBooks(booksData);
+		} else {
+			console.error("Error fetching books:", result.error);
 		}
 	};
 
@@ -69,83 +64,31 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	 * Add book / POST
 	 */
 	const addBook = async (newBook: BookWithoutId) => {
-		try {
-			const response = await fetch(baseApiUrl, {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(newBook),
-			});
-
-			if (!response.ok) {
-				const errorData = await response
-					.json()
-					.catch(() => ({ message: fallbackErrorMessage }));
-				throw new Error(errorData.message || "Failed to add book");
-			}
-
-			return response.status;
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				return { error: error.message };
-			}
-			return { error: fallbackErrorMessage };
-		}
+		return apiRequest(baseApiUrl, "POST", newBook, "Failed to add book");
 	};
 
 	/**
 	 * Delete book / DELETE
 	 */
 	const deleteBook = async (id: number) => {
-		try {
-			const response = await fetch(`${baseApiUrl}/${id}`, {
-				method: "DELETE",
-			});
-
-			if (!response.ok) {
-				const errorData = await response
-					.json()
-					.catch(() => ({ message: fallbackErrorMessage }));
-				throw new Error(errorData.message || "Failed to delete book");
-			}
-
-			return response.status;
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				return { error: error.message };
-			}
-			return { error: fallbackErrorMessage };
-		}
+		return apiRequest(
+			`${baseApiUrl}/${id}`,
+			"DELETE",
+			undefined,
+			"Failed to delete book"
+		);
 	};
 
 	/**
 	 * Edit book / PUT
 	 */
 	const editBook = async (id: number, updatedBook: BookWithoutId) => {
-		try {
-			const response = await fetch(`${baseApiUrl}/${id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(updatedBook),
-			});
-
-			if (!response.ok) {
-				const errorData = await response
-					.json()
-					.catch(() => ({ message: fallbackErrorMessage }));
-				throw new Error(errorData.message || "Failed to edit book");
-			}
-
-			return response.status;
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				return { error: error.message };
-			}
-			return { error: fallbackErrorMessage };
-		}
+		return apiRequest(
+			`${baseApiUrl}/${id}`,
+			"PUT",
+			updatedBook,
+			"Failed to edit book"
+		);
 	};
 
 	return (

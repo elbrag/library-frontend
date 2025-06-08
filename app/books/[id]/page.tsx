@@ -10,8 +10,9 @@ import { useRouter } from "next/navigation";
 import Form from "@/app/components/Form";
 import { getFormData, makeBookFromFormData } from "@/lib/helpers/formData";
 import Input from "@/app/components/Input";
-import { FormDataObjectProps } from "@/lib/types/form";
+import { FormDataObjectProps, FormError } from "@/lib/types/form";
 import { checkIfStatusIsOk } from "@/lib/helpers/api";
+import Error from "@/app/components/Error";
 
 const BookSinglePage: React.FC = () => {
 	const router = useRouter();
@@ -27,6 +28,7 @@ const BookSinglePage: React.FC = () => {
 	const [deletionDone, setDeletionDone] = useState(false);
 	const [showEditingMode, setShowEditingMode] = useState(false);
 	const [editDone, setEditDone] = useState(false);
+	const [errors, setErrors] = useState<FormError[]>([]);
 
 	// Editing form
 	const formData = getFormData(book);
@@ -70,6 +72,7 @@ const BookSinglePage: React.FC = () => {
 				}, 3000);
 			} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
 				console.error("Error deleting book:", result.error);
+				if (result.errors?.length) setErrors(result.errors);
 			}
 		}
 	};
@@ -101,7 +104,9 @@ const BookSinglePage: React.FC = () => {
 				setEditDone(false);
 			}, 3000);
 		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
+			console.log("result:::", result);
 			console.error("Error editing book:", result.error);
+			if (result.errors?.length) setErrors(result.errors);
 		}
 	};
 
@@ -135,6 +140,20 @@ const BookSinglePage: React.FC = () => {
 							/>
 						))}
 					</Form>
+					<div className="mt-4">
+						{!!errors.length && (
+							<>
+								<p className="text-red-700 mb-2">
+									The following errors occurred:
+								</p>
+								{errors.map((err) => (
+									<div key={err.path} className="mb-2">
+										<Error errorText={`${err.path}: ${err.message}`} />
+									</div>
+								))}
+							</>
+						)}
+					</div>
 					<div className="flex gap-4 mt-4 md:mt-6">
 						<Button
 							label="Cancel editing"

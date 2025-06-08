@@ -18,3 +18,8 @@ export interface FormDataObjectProps {
 	value: string;
 	type: "text" | "date" | "url";
 }
+
+export interface FormError {
+	path: string;
+	message: string;
+}
