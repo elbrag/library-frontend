@@ -104,7 +104,6 @@ const BookSinglePage: React.FC = () => {
 				setEditDone(false);
 			}, 3000);
 		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
-			console.log("result:::", result);
 			console.error("Error editing book:", result.error);
 			if (result.errors?.length) setErrors(result.errors);
 		}
