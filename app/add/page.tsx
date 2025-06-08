@@ -41,6 +41,8 @@ const AddPage: React.FC = () => {
 			setSuccess(true);
 			await fetchBooks();
 			setTimeout(() => {
+				const resetFormData = getFormData();
+				setCurrentFormData(resetFormData);
 				setSuccess(false);
 			}, 3000);
 		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
