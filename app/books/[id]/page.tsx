@@ -3,14 +3,13 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Heading from "../../components/Heading";
 import { BookContext } from "../../context/BookContext";
 import { useParams } from "next/navigation";
-import { formatDateFromISO, formatDateToISO } from "@/lib/helpers/date";
+import { formatDateFromISO } from "@/lib/helpers/date";
 import Image from "next/image";
 import Button from "@/app/components/Button";
 import { useRouter } from "next/navigation";
 import Form from "@/app/components/Form";
-import { getFormData } from "@/lib/helpers/formData";
+import { getFormData, makeBookFromFormData } from "@/lib/helpers/formData";
 import Input from "@/app/components/Input";
-import { BookProps } from "@/lib/types/book";
 import { FormDataObjectProps } from "@/lib/types/form";
 
 const BookSinglePage: React.FC = () => {
@@ -85,26 +84,7 @@ const BookSinglePage: React.FC = () => {
 	 * On Save Edits
 	 */
 	const onSaveEdits = async () => {
-		// TODO: Make dry
-		const propToFormDataMap: Record<string, keyof Omit<BookProps, "id">> = {
-			title: "title",
-			author: "author",
-			dateOfPublish: "dateOfPublish",
-			coverImage: "coverImage",
-		};
-
-		const updatedBook: Omit<BookProps, "id"> = currentFormData.reduce(
-			(acc, data) => {
-				const propKey = propToFormDataMap[data.id];
-				if (propKey) {
-					if (propKey === "dateOfPublish")
-						acc[propKey] = formatDateToISO(data.value);
-					else acc[propKey] = data.value;
-				}
-				return acc;
-			},
-			{} as Omit<BookProps, "id">
-		);
+		const updatedBook = makeBookFromFormData(currentFormData);
 		console.log(updatedBook);
 		const result = await editBook(book.id, updatedBook);
 		console.log(result);

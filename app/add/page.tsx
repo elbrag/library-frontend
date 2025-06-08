@@ -6,9 +6,7 @@ import { ChangeEvent, useContext, useState } from "react";
 import Button from "../components/Button";
 import Form from "../components/Form";
 import { BookContext } from "../context/BookContext";
-import { BookProps } from "@/lib/types/book";
-import { getFormData } from "@/lib/helpers/formData";
-import { formatDateToISO } from "@/lib/helpers/date";
+import { getFormData, makeBookFromFormData } from "@/lib/helpers/formData";
 
 const AddPage: React.FC = () => {
 	const { addBook } = useContext(BookContext);
@@ -33,23 +31,7 @@ const AddPage: React.FC = () => {
 	 * On Submit
 	 */
 	const onSubmit = async () => {
-		const propToFormDataMap: Record<string, keyof Omit<BookProps, "id">> = {
-			title: "title",
-			author: "author",
-			dateOfPublish: "dateOfPublish",
-			coverImage: "coverImage",
-		};
-
-		const book: Omit<BookProps, "id"> = currentFormData.reduce((acc, data) => {
-			const propKey = propToFormDataMap[data.id];
-			if (propKey) {
-				if (propKey === "dateOfPublish")
-					acc[propKey] = formatDateToISO(data.value);
-				else acc[propKey] = data.value;
-			}
-			return acc;
-		}, {} as Omit<BookProps, "id">);
-
+		const book = makeBookFromFormData(currentFormData);
 		const result = await addBook(book);
 		console.log(result);
 		setSuccess(true);
