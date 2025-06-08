@@ -5,3 +5,5 @@ export interface BookProps {
 	dateOfPublish: string;
 	coverImage: string;
 }
+
+export type BookWithoutId = Omit<BookProps, "id">;

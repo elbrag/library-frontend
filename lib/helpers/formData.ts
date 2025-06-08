@@ -1,4 +1,4 @@
-import { BookProps } from "../types/book";
+import { BookProps, BookWithoutId } from "../types/book";
 import { FormDataObjectProps } from "../types/form";
 import { formatDateToISO } from "./date";
 
@@ -37,8 +37,8 @@ export const getFormData = (bookData?: BookProps): FormDataObjectProps[] => {
  */
 export const makeBookFromFormData = (
 	formData: FormDataObjectProps[]
-): Omit<BookProps, "id"> => {
-	const propToFormDataMap: Record<string, keyof Omit<BookProps, "id">> = {
+): BookWithoutId => {
+	const propToFormDataMap: Record<string, keyof BookWithoutId> = {
 		title: "title",
 		author: "author",
 		dateOfPublish: "dateOfPublish",
@@ -53,5 +53,5 @@ export const makeBookFromFormData = (
 			else acc[propKey] = data.value;
 		}
 		return acc;
-	}, {} as Omit<BookProps, "id">);
+	}, {} as BookWithoutId);
 };

@@ -1,5 +1,5 @@
 "use client";
-import { BookProps } from "@/lib/types/book";
+import { BookProps, BookWithoutId } from "@/lib/types/book";
 import { BooksContextType } from "@/lib/types/context";
 import {
 	createContext,
@@ -57,7 +57,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	/**
 	 * Add book / POST
 	 */
-	const addBook = async (newBook: Omit<BookProps, "id">) => {
+	const addBook = async (newBook: BookWithoutId) => {
 		try {
 			const response = await fetch(baseApiUrl, {
 				method: "POST",
@@ -99,7 +99,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 	/**
 	 * Edit book / PUT
 	 */
-	const editBook = async (id: number, updatedBook: Omit<BookProps, "id">) => {
+	const editBook = async (id: number, updatedBook: BookWithoutId) => {
 		try {
 			const response = await fetch(`${baseApiUrl}/${id}`, {
 				method: "PUT",
