@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { MenuItemProps } from "@/lib/types/navigation";
+import { usePathname } from "next/navigation";
 
 const Navigation: React.FC = () => {
+	const pathname = usePathname();
 	const [menuOpen, setMenuOpen] = useState(false);
 
 	const menuItems: MenuItemProps[] = [
@@ -13,6 +15,10 @@ const Navigation: React.FC = () => {
 			path: "add",
 		},
 	];
+
+	useEffect(() => {
+		setMenuOpen(false);
+	}, [pathname]);
 
 	return (
 		<header className="w-full px-3 md:px-10 py-3 md:py-8">

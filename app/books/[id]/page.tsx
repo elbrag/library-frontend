@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import Heading from "../../components/Heading";
 import { BookContext } from "../../context/BookContext";
 import { useParams } from "next/navigation";
@@ -11,19 +11,35 @@ import Form from "@/app/components/Form";
 import { getFormData } from "@/lib/helpers/formData";
 import Input from "@/app/components/Input";
 import { BookProps } from "@/lib/types/book";
+import { FormDataObjectProps } from "@/lib/types/form";
 
 const BookSinglePage: React.FC = () => {
-	const { id } = useParams();
 	const router = useRouter();
+
+	// Find book by id
+	const { id } = useParams();
 	const idNumber = typeof id === "string" ? parseInt(id, 10) : null;
 	const { currentBooks, fetchMade, deleteBook, editBook } =
 		useContext(BookContext);
 	const book = currentBooks.find((book) => book.id === idNumber);
+
+	// UI states
 	const [deletionDone, setDeletionDone] = useState(false);
 	const [showEditingMode, setShowEditingMode] = useState(false);
-	const formData = getFormData(book);
-	const [currentFormData, setCurrentFormData] = useState(formData);
 	const [editDone, setEditDone] = useState(false);
+
+	// Editing form
+	const formData = getFormData(book);
+	const [currentFormData, setCurrentFormData] =
+		useState<FormDataObjectProps[]>(formData);
+
+	// Keep formData up to date if currentBooks is updated
+	useEffect(() => {
+		if (currentBooks.length) {
+			const formData = getFormData(book);
+			setCurrentFormData(formData);
+		}
+	}, [book, currentBooks]);
 
 	if (deletionDone)
 		return <Heading tag="h2">Book successfully deleted!</Heading>;

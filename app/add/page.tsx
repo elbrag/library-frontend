@@ -55,7 +55,7 @@ const AddPage: React.FC = () => {
 		setSuccess(true);
 		setTimeout(() => {
 			setSuccess(false);
-		}, 5000);
+		}, 3000);
 	};
 
 	return (
