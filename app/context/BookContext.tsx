@@ -71,8 +71,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 				throw new Error("Failed to add book");
 			}
 
-			const addedBook = await response.json();
-			setCurrentBooks([...currentBooks, addedBook]);
+			fetchBooks();
 		} catch (error) {
 			console.error("Error adding book:", error);
 		}
@@ -91,7 +90,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 				throw new Error("Failed to delete book");
 			}
 
-			setCurrentBooks(currentBooks.filter((book) => book.id !== id));
+			fetchBooks();
 		} catch (error) {
 			console.error("Error deleting book:", error);
 		}
@@ -114,10 +113,7 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 				throw new Error("Failed to edit book");
 			}
 
-			const editedBook = await response.json();
-			setCurrentBooks(
-				currentBooks.map((book) => (book.id === id ? editedBook : book))
-			);
+			fetchBooks();
 		} catch (error) {
 			console.error("Error editing book:", error);
 		}

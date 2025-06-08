@@ -9,7 +9,7 @@ const Input: React.FC<InputProps> = ({
 	type = "text",
 	placeholder,
 	className,
-	required = false,
+	required = true,
 	onChange,
 	onClickEnter,
 }) => {
@@ -24,7 +24,10 @@ const Input: React.FC<InputProps> = ({
 
 	return (
 		<label className={`w-full text-left block ${className}`}>
-			<div className="mb-1 text-sm font-medium">{label}</div>
+			<div className="mb-1 text-sm font-medium">
+				{label}
+				{!!required && "*"}
+			</div>
 			<input
 				id={id}
 				className="bg-orange-50 border border-gray-700 rounded-sm block w-full p-2 md:px-4 md:py-2"

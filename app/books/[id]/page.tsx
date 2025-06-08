@@ -25,8 +25,9 @@ const BookSinglePage: React.FC = () => {
 	const [currentFormData, setCurrentFormData] = useState(formData);
 	const [editDone, setEditDone] = useState(false);
 
-	if (deletionDone) return <div>Book successfully deleted!</div>;
-	if (editDone) return <div>Book successfully edited!</div>;
+	if (deletionDone)
+		return <Heading tag="h2">Book successfully deleted!</Heading>;
+	if (editDone) return <Heading tag="h2">Book successfully edited!</Heading>;
 
 	if (!fetchMade) {
 		return <div>Fetching book...</div>;
