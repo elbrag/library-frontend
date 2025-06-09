@@ -109,6 +109,13 @@ const BookSinglePage: React.FC = () => {
 		}
 	};
 
+	/**
+	 * Get errors by input id
+	 */
+	const getErrorsByInputId = (id: string) => {
+		return errors.filter((error) => error.path === id);
+	};
+
 	return (
 		<div className="flex flex-col items-center gap-4 md:gap-8">
 			<Image
@@ -129,30 +136,24 @@ const BookSinglePage: React.FC = () => {
 				<div>
 					<Form>
 						{currentFormData.map((data) => (
-							<Input
-								key={data.id}
-								label={data.label}
-								id={data.id}
-								value={data.value}
-								type={data.type}
-								onChange={(event) => onInputChange(data.id, event)}
-							/>
+							<div className="w-full" key={data.id}>
+								<Input
+									label={data.label}
+									id={data.id}
+									value={data.value}
+									type={data.type}
+									onChange={(event) => onInputChange(data.id, event)}
+								/>
+								{!!getErrorsByInputId(data.id).length &&
+									getErrorsByInputId(data.id).map((err) => (
+										<div key={err.path} className="my-2">
+											<Error errorText={`Error: ${err.message}`} />
+										</div>
+									))}
+							</div>
 						))}
 					</Form>
-					<div className="mt-4">
-						{!!errors.length && (
-							<>
-								<p className="text-red-700 mb-2">
-									The following errors occurred:
-								</p>
-								{errors.map((err) => (
-									<div key={err.path} className="mb-2">
-										<Error errorText={`${err.path}: ${err.message}`} />
-									</div>
-								))}
-							</>
-						)}
-					</div>
+
 					<div className="flex gap-4 mt-4 md:mt-6">
 						<Button
 							label="Cancel editing"

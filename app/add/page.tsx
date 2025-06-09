@@ -54,6 +54,13 @@ const AddPage: React.FC = () => {
 		}
 	};
 
+	/**
+	 * Get errors by input id
+	 */
+	const getErrorsByInputId = (id: string) => {
+		return errors.filter((error) => error.path === id);
+	};
+
 	return (
 		<>
 			<div className="mb-6 md:mb-10">
@@ -66,29 +73,23 @@ const AddPage: React.FC = () => {
 			) : (
 				<Form>
 					{currentFormData.map((data) => (
-						<Input
-							key={data.id}
-							label={data.label}
-							id={data.id}
-							value={data.value}
-							type={data.type}
-							onChange={(event) => onInputChange(data.id, event)}
-						/>
-					))}
-					<div className="mt-4">
-						{!!errors.length && (
-							<>
-								<p className="text-red-700 mb-2">
-									The following errors occurred:
-								</p>
-								{errors.map((err) => (
-									<div key={err.path} className="mb-2">
-										<Error errorText={`${err.path}: ${err.message}`} />
+						<div className="w-full" key={data.id}>
+							<Input
+								label={data.label}
+								id={data.id}
+								value={data.value}
+								type={data.type}
+								onChange={(event) => onInputChange(data.id, event)}
+							/>
+							{!!getErrorsByInputId(data.id).length &&
+								getErrorsByInputId(data.id).map((err) => (
+									<div key={err.path} className="my-2">
+										<Error errorText={`Error: ${err.message}`} />
 									</div>
 								))}
-							</>
-						)}
-					</div>
+						</div>
+					))}
+					<div className="mt-4"></div>
 					<div className="mt-4 md:mt-6">
 						<Button
 							label="Add book"
