@@ -11,17 +11,15 @@ export default function Home() {
 		<div>
 			<div className="text-center">
 				<Heading tag="h1">Welcome to The Classics Library</Heading>
-				<p className="md:text-lg">The library is open</p>
+				<p className="md:text-lg mb-6 md:mb-10">The library is open</p>
 			</div>
-			<div>{!!currentBooks?.length && <BookList books={currentBooks} />}</div>
+			<div>
+				{!!currentBooks?.length ? (
+					<BookList books={currentBooks} />
+				) : (
+					<Heading tag="h2">There are no books in the library</Heading>
+				)}
+			</div>
 		</div>
 	);
 }
-
-// {
-//   "id": 1006,
-//   "title": "Brott och straff",
-//   "author": "Fjodor Dostojevskij",
-//   "dateOfPublish": "2024-09-20T00:00:00.000Z",
-//   "coverImage": "https://image.bokus.com/images/9789100808020_383x_brott-och-straff_storpocket"
-// }

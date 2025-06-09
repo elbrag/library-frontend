@@ -45,8 +45,11 @@ const AddPage: React.FC = () => {
 				setCurrentFormData(resetFormData);
 				setSuccess(false);
 			}, 3000);
-		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
-			console.error("Error adding book:", result.error);
+		} else if (typeof result !== "number") {
+			if (result.hasOwnProperty("error")) {
+				// setErrors([...errors, result.error])
+				console.error("Error adding book:", result.error);
+			}
 			if (result.errors?.length) setErrors(result.errors);
 		}
 	};
