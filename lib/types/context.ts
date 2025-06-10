@@ -2,7 +2,10 @@ import { BookProps, BookWithoutId } from "./book";
 
 export interface BooksContextType {
 	currentBooks: BookProps[];
-	fetchBooks: () => Promise<void>;
+	fetchBooks: () => Promise<
+		| number
+		| { error: string; errors?: Array<{ path: string; message: string }> }
+	>;
 	addBook: (
 		book: BookWithoutId
 	) => Promise<

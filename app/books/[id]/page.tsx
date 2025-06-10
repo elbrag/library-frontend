@@ -25,10 +25,13 @@ const BookSinglePage: React.FC = () => {
 	const book = currentBooks.find((book) => book.id === idNumber);
 
 	// UI states
+	const [deletionLoading, setDeletionLoading] = useState(false);
+	const [editingLoading, setEditingLoading] = useState(false);
 	const [deletionDone, setDeletionDone] = useState(false);
 	const [showEditingMode, setShowEditingMode] = useState(false);
 	const [editDone, setEditDone] = useState(false);
 	const [errors, setErrors] = useState<FormError[]>([]);
+	const [generalError, setGeneralError] = useState<string>();
 
 	// Editing form
 	const formData = getFormData(book);
@@ -61,18 +64,28 @@ const BookSinglePage: React.FC = () => {
 		const confirmationMessage = `Are you sure you want to delete the book titled "${book.title}"? This action cannot be undone.`;
 
 		if (window.confirm(confirmationMessage)) {
+			setGeneralError("");
+			setErrors([]);
+			setDeletionLoading(true);
 			const result = await deleteBook(book.id);
 
-			if (typeof result === "number" && checkIfStatusIsOk(result)) {
-				setDeletionDone(true);
-				await fetchBooks();
-				setTimeout(() => {
-					setDeletionDone(false);
-					router.push("/");
-				}, 3000);
-			} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
-				console.error("Error deleting book:", result.error);
+			if (typeof result === "number") {
+				if (checkIfStatusIsOk(result)) {
+					setDeletionDone(true);
+					await fetchBooks();
+					setTimeout(() => {
+						setDeletionDone(false);
+						setDeletionLoading(false);
+						router.push("/");
+					}, 3000);
+				}
+			} else {
+				if (result.hasOwnProperty("error")) {
+					console.error("Error deleting book:", result.error);
+					setGeneralError(result.error);
+				}
 				if (result.errors?.length) setErrors(result.errors);
+				setDeletionLoading(false);
 			}
 		}
 	};
@@ -94,18 +107,29 @@ const BookSinglePage: React.FC = () => {
 	 * On Save Edits
 	 */
 	const onSaveEdits = async () => {
+		setGeneralError("");
+		setErrors([]);
+		setEditingLoading(true);
+
 		const updatedBook = makeBookFromFormData(currentFormData);
 		const result = await editBook(book.id, updatedBook);
 
-		if (typeof result === "number" && checkIfStatusIsOk(result)) {
-			setEditDone(true);
-			await fetchBooks();
-			setTimeout(() => {
-				setEditDone(false);
-			}, 3000);
-		} else if (typeof result !== "number" && result.hasOwnProperty("error")) {
-			console.error("Error editing book:", result.error);
+		if (typeof result === "number") {
+			if (checkIfStatusIsOk(result)) {
+				setEditDone(true);
+				await fetchBooks();
+				setTimeout(() => {
+					setEditDone(false);
+					setEditingLoading(false);
+				}, 3000);
+			}
+		} else {
+			if (result.hasOwnProperty("error")) {
+				console.error("Error editing book:", result.error);
+				setGeneralError(result.error);
+			}
 			if (result.errors?.length) setErrors(result.errors);
+			setEditingLoading(false);
 		}
 	};
 
@@ -153,19 +177,30 @@ const BookSinglePage: React.FC = () => {
 							</div>
 						))}
 					</Form>
-
+					{!!generalError && (
+						<div className="mt-4 w-full">
+							<Error errorText={`Error: ${generalError}`} />
+						</div>
+					)}
 					<div className="flex gap-4 mt-4 md:mt-6">
 						<Button
 							label="Cancel editing"
 							onClick={() => setShowEditingMode(false)}
 						/>
-						<Button label="Save edits" onClick={onSaveEdits} />
+						<Button
+							label={editingLoading ? "Saving edits…" : "Save edits"}
+							onClick={onSaveEdits}
+						/>
 					</div>
 				</div>
 			) : (
 				<div className="flex gap-4">
 					<Button label="Edit book" onClick={() => setShowEditingMode(true)} />
-					<Button label="Delete book" color="red" onClick={onDeleteBook} />
+					<Button
+						label={deletionLoading ? "Deleting book…" : "Delete book"}
+						color="red"
+						onClick={onDeleteBook}
+					/>
 				</div>
 			)}
 		</div>

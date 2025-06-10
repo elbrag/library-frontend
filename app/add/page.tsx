@@ -14,8 +14,10 @@ const AddPage: React.FC = () => {
 	const { addBook, fetchBooks } = useContext(BookContext);
 	const formData = getFormData();
 	const [currentFormData, setCurrentFormData] = useState(formData);
+	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [errors, setErrors] = useState<FormError[]>([]);
+	const [generalError, setGeneralError] = useState<string>();
 
 	/**
 	 * On Input Change
@@ -34,23 +36,30 @@ const AddPage: React.FC = () => {
 	 * On Submit
 	 */
 	const onSubmit = async () => {
+		setGeneralError("");
+		setErrors([]);
+		setLoading(true);
 		const book = makeBookFromFormData(currentFormData);
 		const result = await addBook(book);
 
-		if (typeof result === "number" && checkIfStatusIsOk(result)) {
-			setSuccess(true);
-			await fetchBooks();
-			setTimeout(() => {
-				const resetFormData = getFormData();
-				setCurrentFormData(resetFormData);
-				setSuccess(false);
-			}, 3000);
-		} else if (typeof result !== "number") {
+		if (typeof result === "number") {
+			if (checkIfStatusIsOk(result)) {
+				setSuccess(true);
+				await fetchBooks();
+				setTimeout(() => {
+					const resetFormData = getFormData();
+					setCurrentFormData(resetFormData);
+					setSuccess(false);
+					setLoading(false);
+				}, 3000);
+			}
+		} else {
 			if (result.hasOwnProperty("error")) {
-				// setErrors([...errors, result.error])
 				console.error("Error adding book:", result.error);
+				setGeneralError(result.error);
 			}
 			if (result.errors?.length) setErrors(result.errors);
+			setLoading(false);
 		}
 	};
 
@@ -89,10 +98,14 @@ const AddPage: React.FC = () => {
 								))}
 						</div>
 					))}
-					<div className="mt-4"></div>
+					{!!generalError && (
+						<div className="mt-4 w-full">
+							<Error errorText={`Error: ${generalError}`} />
+						</div>
+					)}
 					<div className="mt-4 md:mt-6">
 						<Button
-							label="Add book"
+							label={loading ? "Adding book…" : "Add book"}
 							isSubmit={true}
 							disabled={currentFormData.some(
 								(dataObj: FormDataObjectProps) => dataObj.value?.length === 0

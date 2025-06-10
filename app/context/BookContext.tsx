@@ -1,5 +1,5 @@
 "use client";
-import { apiRequest } from "@/lib/helpers/api";
+import { apiRequest, checkIfStatusIsOk } from "@/lib/helpers/api";
 import { BookProps, BookWithoutId } from "@/lib/types/book";
 import { BooksContextType } from "@/lib/types/context";
 import {
@@ -12,7 +12,9 @@ import {
 
 export const BookContext = createContext<BooksContextType>({
 	currentBooks: [],
-	fetchBooks: async () => {},
+	fetchBooks: async () => {
+		return 102;
+	},
 	addBook: async () => {
 		return 102;
 	},
@@ -50,14 +52,13 @@ export const BookContextProvider = ({ children }: { children: ReactNode }) => {
 			"Failed to fetch books"
 		);
 
-		if (typeof result === "number") {
+		if (typeof result === "number" && checkIfStatusIsOk(result)) {
 			const booksData = await fetch(baseApiUrl)
 				.then((response) => response.json())
 				.catch(() => []);
 			setCurrentBooks(booksData);
-		} else {
-			console.error("Error fetching books:", result.error);
 		}
+		return result;
 	};
 
 	/**
