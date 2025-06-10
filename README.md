@@ -18,7 +18,8 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 Here is some data for a new book:
 
-```{
+```
+{
    "title": "Brott och straff",
    "author": "Fjodor Dostojevskij",
    "dateOfPublish": "2024-09-20T00:00:00.000Z",
